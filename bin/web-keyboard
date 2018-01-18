@@ -1,0 +1,52 @@
+#!/bin/bash
+
+WK_SELF="$0"
+if [ "$WK_SELF" = "" ]
+	then
+	WK_SELF="${BASH_SOURCE[0]}"
+fi
+WK_SELF="$(realpath "$WK_SELF")"
+WK_BIN="$(dirname "$WK_SELF")"
+WK_ROOT="$(dirname "$WK_BIN")"
+WK_WEB="$WK_ROOT/web"
+WK_SOCKET_PY="$WK_ROOT/socket/server.py"
+
+HTTP_PORT=8080
+SOCKET_PORT=8081
+
+SOCKET_ARGS="$SOCKET_PORT"
+
+#echo "WK_SELF	: $WK_SELF"
+#echo "WK_ROOT	: $WK_ROOT"
+#echo "WK_WEB	: $WK_WEB"
+
+# Move to web dir to run HTTP Server
+cd "$WK_WEB"
+
+if [ "$1" = "stop" ]; then
+	# Stopping server
+	echo Stopping Server ...
+	fuser -k $HTTP_PORT/tcp
+	fuser -k $SOCKET_PORT/tcp
+	echo OK
+	exit
+elif [ "$1" = "-v" ]; then
+	echo "Version: Beta"
+	exit
+elif [ "$1" = "debug" ]; then
+	SOCKET_ARGS="$SOCKET_ARGS debug"
+	echo Debugging on, you may have a lot of output..
+fi
+
+# Run the main HTTP server interface
+python3 -m http.server $HTTP_PORT &> /dev/null &
+
+if [ "$?" -eq "0" ];then
+    echo HTTP Server runing on $HTTP_PORT
+else
+    echo FAIL Runing HTTP Server on $HTTP_PORT
+    exit 1
+fi
+
+# Run the websocket as xdotool bridge
+python3 "$WK_SOCKET_PY" $SOCKET_ARGS

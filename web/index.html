@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web Keyboard Beta</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+<body>
+<div id="keyboard">
+</div>
+
+<div>
+	<input type="text" id="sendtext" placeholder="Type text">
+</div>
+
+<div id="mouseboard">
+	<div id="mousebutton">
+		<button id="mousebutton-left" data-cmd="C1">
+			Left Click
+		</button>
+		<button id="mousebutton-middle" data-cmd="C2">
+			Middle Click
+		</button>
+		<button id="mousebutton-right" data-cmd="C3">
+			Right Click
+		</button>
+	</div>
+	<div id="mouselog">
+		0 X 0
+	</div>
+	<div id="mousebox">
+		<div id="mousepad">
+		</div>
+		<div id="mousescroll">
+		</div>
+	</div>
+</div>
+<div id="footbutton">
+	<a class="float-btn" href="#keyboard">
+		Keyboard
+	</a>
+	<a class="float-btn" href="#mouseboard">
+		Mouse
+	</a>
+</div>
+<pre id="debug">
+#debug Console
+</pre>
+<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="keyboard-config.js"></script>
+<script type="text/javascript" src="keyboard.js"></script>
+<script type="text/javascript" src="mouse.js"></script>
+</body>
+</html>
