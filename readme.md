@@ -30,7 +30,7 @@ Open browser on remote devices, navigate to http://{IP}:8080
 
 __Stop it__
 
-    $ ./xdotoolweb stop
+    $ ctrl+c on terminal or kill it
 
 __Run it and leave terminal or SSH__
 
@@ -39,7 +39,7 @@ __Run it and leave terminal or SSH__
 
 __Debug output__
 
-    $ ./xdotoolweb debug &
+    $ ./xdotoolweb --debug &
 
 Tested On :
 -------------
