@@ -1,8 +1,7 @@
 log('keyboard-config.js');
 var KEYBOARD_BUTTON=
 [
-	/*[
-		{'Escape' : 'Esc'},
+	[
 		'F1',
 		'F2',
 		'F3',
@@ -15,8 +14,9 @@ var KEYBOARD_BUTTON=
 		'F10',
 		'F11',
 		'F12'
-	],*/
+	],
 	[
+		{'Escape' : 'Esc'},
 		[ '1', {'exclam' : '!'} ],
 		[ '2', {'quotedbl' : '"'} ],
 		[ '3', {'numbersign' : '#'} ],
@@ -75,6 +75,7 @@ var KEYBOARD_BUTTON=
 ]
 
 var KEYBOARD_BUTTON_STYLE = {
-	'space'	: 'min-width: 50%',
-	'super'	: 'max-width: 70px'
+	'space'	: 'flex: 3',
+	'Return'	: 'flex: 2',
+	'BackSpace'	: 'flex: 2'
 }

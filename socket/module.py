@@ -9,11 +9,12 @@ class DebugThread(Thread):
 
     def run(self):
         while True:
+            sys.stdout.flush()
             line = self.pipe.readline() # blocking read
             if not line:
                 print("reader: no more line, exit")
                 break
-            print('>', line.strip())
+            print(line.strip())
 
 # Python Simple WebSocket
 # Author: Johan Hanssen Seferidis

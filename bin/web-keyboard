@@ -39,7 +39,7 @@ elif [ "$1" = "debug" ]; then
 fi
 
 # Run the main HTTP server interface
-python3 -m http.server $HTTP_PORT &> /dev/null &
+python3 -m http.server $HTTP_PORT > /dev/null  2>&1 &
 
 if [ "$?" -eq "0" ];then
     echo HTTP Server runing on $HTTP_PORT

@@ -172,6 +172,7 @@ function touchScrollMove(e)
 		LAST_TOUCH.X	= e.touches[0].pageX;
 		LAST_TOUCH.Y	= e.touches[0].pageY;
 		WS.send('K' + (movementY > 0 ? 'Down' : 'Up'));
+		//WS.send('K' + (movementY > 0 ? 'Pointer_Up' : 'Pointer_Down'));
 	}
 }
 

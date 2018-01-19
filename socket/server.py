@@ -66,19 +66,25 @@ if not xdotool :
 VARS = os.environ.copy()
 VARS['DISPLAY'] = ':0'
 VARS['XAUTHORITY'] = '%s/.Xauthority' % VARS['HOME']
+if DEBUG:
+	stdout_pipe = PIPE 
+	stderr_pipe = STDOUT
+else:
+	devnull = open(os.devnull, 'w')
+	stdout_pipe = devnull
+	stderr_pipe = devnull
 
 # Launch xdotool
 proc = Popen([xdotool, '-'],
 		shell=False,
 		stdin=PIPE,
-		stdout=PIPE,
-		stderr=STDOUT,
+		stdout=stdout_pipe,
+		stderr=stderr_pipe,
 		env=VARS,
 		bufsize=1,
 		universal_newlines=True
 	)
-
-sleep(0.2)
+sleep(0.1)
 # check if not running or killed
 poll	= proc.poll();
 if poll != None:
@@ -114,14 +120,16 @@ def message_received(client, server, message):
 		proc.stdin.write(CMD +'\n')
 		if DEBUG:
 			print(CMD)
+			sys.stdout.flush()
 
 	elif DEBUG:
 		print('(!) Ignored: ' + message)
+		sys.stdout.flush()
 
 # Start WebSocket
 server = WebsocketServer(PORT, IP)
 print("WebSocket listening on %d " % PORT)
-
+sys.stdout.flush()
 # show xdotool version to Console
 proc.stdin.write('version\n')
 

@@ -3,16 +3,85 @@
 <head>
 	<title>Web Keyboard Beta</title>
 	<link rel="stylesheet" type="text/css" href="style.css"/>
+	<meta charset="utf-8" /> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body>
+<h2 class="title">
+	Keyboard
+</h2>
 <div id="keyboard">
 </div>
 
 <div>
 	<input type="text" id="sendtext" placeholder="Type text">
 </div>
-
+<div id="control">
+	<h2 class="title">
+		Control &amp; Navigation
+	</h2>
+	<div id="navigation">
+		<div class="btn-row">
+			<button class="btn-square" data-cmd="KHome">
+				 Home
+			</button>
+			<button class="btn-square" data-cmd="KUp">
+				 &#8593;
+			</button>
+			<button class="btn-square" data-cmd="KPage_Up">
+				 PgUp
+			</button>
+			<button class="btn-square" data-cmd="KAlt+F4">
+				 Close Window
+			</button>
+		</div>
+		<div class="btn-row">
+			<button class="btn-square" data-cmd="KLeft">
+				&#8592;
+			</button>
+			<button class="btn-square" data-cmd="KReturn" style="font-size: x-large;">
+				OK
+			</button>
+			<button class="btn-square" data-cmd="KRight">
+				&#8594;
+			</button>
+			<button class="btn-square" data-cmd="KControl+F4">
+				 Close Tab
+			</button>
+		</div>
+		<div class="btn-row">
+			<button class="btn-square" data-cmd="KEnd">
+				 End
+			</button>
+			<button class="btn-square" data-cmd="KDown">
+				&#8595;
+			</button>
+			<button class="btn-square" data-cmd="KPage_Down">
+				 PgDn
+			</button>
+			<button class="btn-square" data-cmd="KControl+Tab">
+				 Swith Tab
+			</button>
+		</div>
+		<div class="btn-row">
+			<button class="btn-square" data-cmd="KAlt+Left">
+				 Back
+			</button>
+			<button class="btn-square" data-cmd="KF5">
+				Refresh
+			</button>
+			<button class="btn-square" data-cmd="KAlt+Right">
+				 Forward
+			</button>
+			<button class="btn-square" data-cmd="KControl+t">
+				 New Tab
+			</button>
+		</div>
+	</div>
+</div>
+<h2 class="title">
+	Mouse
+</h2>
 <div id="mouseboard">
 	<div id="mousebutton">
 		<button id="mousebutton-left" data-cmd="C1">
@@ -38,6 +107,9 @@
 <div id="footbutton">
 	<a class="float-btn" href="#keyboard">
 		Keyboard
+	</a>
+	<a class="float-btn" href="#control">
+		Control
 	</a>
 	<a class="float-btn" href="#mouseboard">
 		Mouse

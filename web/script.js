@@ -1,6 +1,6 @@
 
 // Debug and logging function
-var DEBUG = true,
+var DEBUG = false,
 	DEBUG_EL = document.getElementById('debug');
 
 if(!DEBUG)
