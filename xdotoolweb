@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+import argparse, os, sys
+from threading import Thread, Event
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+from subprocess import Popen, PIPE, STDOUT
+from web_socket import WebsocketServer
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--debug', '-d',
+					action="store_true",
+				   	help='Debug output')
+
+parser.add_argument('--listen', '-l',
+					default='0.0.0.0',
+				   	help='Listen host [default: 0.0.0.0]')
+
+parser.add_argument('--port', '-p',
+					default=8080, type=int,
+					help='Web Server Listen port [default: 8080]')
+
+args = parser.parse_args()
+DEBUG = args.debug
+WEBSOCKET_PORT = 8081 # Must match with javascript
+
+# Mapping command, WebSocket just accept this command (as a prefix)
+CMD_MAPS={
+	# Keyboard func
+	"K"	: "key",
+	"D" : "keydown",
+	"U" : "keyup",
+	"T" : "type", #enclosed by single quote
+
+	# Mouse func
+	"M" : "mousemove_relative",
+	"C" : "click",
+	"E" : "click --repeat 2", # double click
+	"N" : "mousedown",
+	"P" : "mouseup"
+}
+
+# Called for every client connecting (after handshake)
+def new_client(client, server):
+	print("New Client: %d" % client['id'])
+
+# Called for every client disconnecting
+def client_left(client, server):
+	print("Client: %d disconnected" % client['id'])
+
+# Called when a client sends a message
+def message_received(client, server, message):
+	poll	= proc.poll();
+	if poll != None:
+		msg = 'please restart the server, xdotool killed: %d' % poll
+		client.send_message(msg)
+		print(msg)
+	
+	CMD = CMD_MAPS.get(message[0])
+	# Just process listed CMD
+	if CMD:
+		# Prevent from code injection
+		if CMD == "type":
+			CMD	= CMD + ' "' + message[1:].replace('"', '\\"') + '"'
+		else:
+			CMD	= CMD + ' ' + message[1:]
+
+		proc.stdin.write(CMD +'\n')
+		if DEBUG:
+			print(CMD)
+			sys.stdout.flush()
+
+	elif DEBUG:
+		print('(!) Ignored: ' + message)
+		sys.stdout.flush()
+
+#find xdotool binary location
+proc = Popen(['which xdotool'], shell=True, stdout=PIPE)
+stdout, stderr = proc.communicate()
+xdotool   = stdout.decode().strip()
+
+# if no xdotool binary found
+if not xdotool :
+	print("xdotool not installed on your system.")
+	exit(1)
+
+# Setup required env vars for xdotool
+VARS = os.environ.copy()
+VARS['DISPLAY'] = ':0'
+VARS['XAUTHORITY'] = '%s/.Xauthority' % VARS['HOME']
+if DEBUG:
+	stdout_pipe = PIPE 
+	stderr_pipe = STDOUT
+else:
+	devnull = open(os.devnull, 'w')
+	stdout_pipe = devnull
+	stderr_pipe = devnull
+#Launching xdotool
+proc = Popen([xdotool, '-'],
+		shell=False,
+		stdin=PIPE,
+		stdout=stdout_pipe,
+		stderr=stderr_pipe,
+		env=VARS,
+		bufsize=1,
+		universal_newlines=True
+	)
+READER_THREAD=None
+if DEBUG:
+	def outputReader(p):
+		while True:
+			sys.stdout.flush()
+			poll	= p.poll();
+			if poll != None:
+				print("xdotool exited with code", poll)
+				break
+
+			line = p.stdout.readline() # blocking read
+			if not line:
+				print("reader: no more line, exit")
+				break
+			print(line.strip())
+
+	# Start output reader for xdotool
+	READER_THREAD = Thread(
+							target	= outputReader,
+							args	= (proc,),
+							daemon	= True
+						  )
+	READER_THREAD.start()
+
+if DEBUG:
+	HttpHandler=SimpleHTTPRequestHandler
+else:
+	class HttpHandler(SimpleHTTPRequestHandler):
+		def log_message(self, format, *args):
+			return
+
+# Prepare for web server
+web_dir = os.path.join( os.path.dirname(os.path.realpath(__file__)), 'web')
+os.chdir( web_dir )
+
+# HTTP Web Server Handler
+WEB_THREAD = Thread(target= HTTPServer((args.listen, args.port), HttpHandler).serve_forever,
+					daemon=True )
+WEB_THREAD.start()
+print("WebServer listening on %s:%d " % (args.listen, WEBSOCKET_PORT))
+# WebSocket handler
+WS = WebsocketServer(WEBSOCKET_PORT, args.listen)
+WS.set_fn_new_client(new_client)
+WS.set_fn_client_left(client_left)
+WS.set_fn_message_received(message_received)
+
+try:
+	print("WebSocket listening on %s:%d " % (args.listen, WEBSOCKET_PORT))
+	sys.stdout.flush()
+	# Start WebSocket
+	WS.run_forever()
+except KeyboardInterrupt:
+	print("WebSocket Stopped.")
+	exit()
+

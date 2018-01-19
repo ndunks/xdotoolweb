@@ -1,21 +1,3 @@
-# Debug reader thread 
-# Class thread reader
-from threading import Thread
-class DebugThread(Thread):
-    def __init__(self, stream, server):
-        Thread.__init__(self)
-        self.pipe   = stream
-        self.server = server
-
-    def run(self):
-        while True:
-            sys.stdout.flush()
-            line = self.pipe.readline() # blocking read
-            if not line:
-                print("reader: no more line, exit")
-                break
-            print(line.strip())
-
 # Python Simple WebSocket
 # Author: Johan Hanssen Seferidis
 # License: MIT
