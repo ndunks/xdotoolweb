@@ -3,7 +3,7 @@ xdotool Web Based Interface
 
 > Web Based Keyboard and Mouse Remote Controller
 
-[Screenshot] (web/preview.png)
+![Screenshot](web/preview.png?raw=true "Title")
 
 How it Works
 ------------
