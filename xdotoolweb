@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse, os, sys
 from threading import Thread, Event
+from time import sleep
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from subprocess import Popen, PIPE, STDOUT
 from web_socket import WebsocketServer
@@ -52,8 +53,8 @@ def message_received(client, server, message):
 	poll	= proc.poll();
 	if poll != None:
 		msg = 'please restart the server, xdotool killed: %d' % poll
-		client.send_message(msg)
 		print(msg)
+		client.send_message(msg)
 	
 	CMD = CMD_MAPS.get(message[0])
 	# Just process listed CMD
@@ -85,8 +86,11 @@ if not xdotool :
 
 # Setup required env vars for xdotool
 VARS = os.environ.copy()
-VARS['DISPLAY'] = ':0'
-VARS['XAUTHORITY'] = '%s/.Xauthority' % VARS['HOME']
+if VARS.get('DISPLAY') == None:
+	VARS['DISPLAY'] = ':0'
+if VARS.get('XAUTHORITY') == None:
+	VARS['XAUTHORITY'] = '%s/.Xauthority' % VARS['HOME']
+
 if DEBUG:
 	stdout_pipe = PIPE 
 	stderr_pipe = STDOUT
@@ -104,6 +108,15 @@ proc = Popen([xdotool, '-'],
 		bufsize=1,
 		universal_newlines=True
 	)
+sleep(0.2)
+
+poll	= proc.poll();
+if poll != None:
+	print("xdotool exited with code", poll)
+	line = proc.stdout.readline()
+	print(line)
+	exit(1)
+
 READER_THREAD=None
 if DEBUG:
 	def outputReader(p):
@@ -143,7 +156,7 @@ os.chdir( web_dir )
 WEB_THREAD = Thread(target= HTTPServer((args.listen, args.port), HttpHandler).serve_forever,
 					daemon=True )
 WEB_THREAD.start()
-print("WebServer listening on %s:%d " % (args.listen, WEBSOCKET_PORT))
+print("WebServer listening on %s:%d " % (args.listen, args.port))
 # WebSocket handler
 WS = WebsocketServer(WEBSOCKET_PORT, args.listen)
 WS.set_fn_new_client(new_client)

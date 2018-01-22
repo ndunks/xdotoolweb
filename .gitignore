@@ -1,3 +1,3 @@
-/sftp-config.json
-**/__pycache__
+sftp-config.json
+__pycache__
 .test

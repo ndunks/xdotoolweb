@@ -54,7 +54,7 @@ var KEYBOARD_BUTTON=
 		{ 'Return' : 'enter'}
 	],
 	[
-		[ { 'minus' : '-'} , '_' ],
+		[ { 'minus' : '-'} , {'underscore' : '_'} ],
 		'z',
 		'x',
 		'c',
@@ -62,7 +62,7 @@ var KEYBOARD_BUTTON=
 		'b',
 		'n',
 		'm',
-		[ '.', ',' ],
+		[ {'period' : '.'}, {'comma': ','} ],
 		{'at' : '@' }
 	],
 	[
